@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UMPRUM Map Generator</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+        .panel { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; max-width: 800px; }
+        input, select { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        button { background: #0000ff; color: white; padding: 10px 20px; border: none; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .map-wrap { position: relative; display: inline-block; cursor: crosshair; border: 2px solid #333; }
+        img { max-width: 100%; display: block; }
+        .dot { position: absolute; width: 10px; height: 10px; background: red; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+    </style>
+</head>
+<body>
+
+<div class="panel">
+    <h2>School details</h2>
+    <label>Select map:</label>
+    <select id="mapSelect" onchange="changeMap()">
+        <option value="eu">Europe</option>
+        <option value="world">World</option>
+    </select>
+
+    <label>School name:</label>
+    <input type="text" id="name" placeholder="For example: Royal College of Art">
+    
+    <label>Link:</label>
+    <input type="text" id="url" placeholder="https://...">
+    
+    <label>Result (code for schools-data.js):</label>
+    <textarea id="output" rows="3" style="width:100%"></textarea>
+    <button onclick="copyCode()">Copy code</button>
+</div>
+
+<div class="map-wrap" onclick="setPoint(event)">
+    <img id="mapImg" src="eu_map.PNG">
+    <div id="dot" class="dot" style="display:none;"></div>
+</div>
+
+<script>
+    const maps = {
+        eu: "eu_map.PNG",
+        world: "wrld_map.PNG" 
+    };
+
+    function changeMap() {
+        const type = document.getElementById('mapSelect').value;
+        document.getElementById('mapImg').src = maps[type];
+        document.getElementById('dot').style.display = 'none';
+    }
+
+    function setPoint(e) {
+        const img = document.getElementById('mapImg');
+        const rect = img.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
+        const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2);
+        
+        const dot = document.getElementById('dot');
+        dot.style.left = x + '%';
+        dot.style.top = y + '%';
+        dot.style.display = 'block';
+
+        const name = document.getElementById('name').value;
+        const url = document.getElementById('url').value;
+        
+        const code = `{ name: "${name}", url: "${url}", x: ${x}, y: ${y} },`;
+        document.getElementById('output').value = code;
+    }
+
+    function copyCode() {
+        const text = document.getElementById('output');
+        text.select();
+        document.execCommand('copy');
+        alert("Code copied!");
+    }
+</script>
+
+</body>
+</html>

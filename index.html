@@ -1,0 +1,78 @@
+<script src="schools-data.js"></script>
+
+<div class="umprum-map-widget">
+    <div class="map-tabs">
+        <button class="map-tab active" onclick="switchMap('eu')">Europe</button>
+        <button class="map-tab" onclick="switchMap('world')">World</button>
+    </div>
+
+    <div id="map-container" class="map-container">
+        <img id="current-map-img" src="" alt="Map" class="map-img">
+        <div id="markers-layer"></div>
+    </div>
+</div>
+
+<style>
+    .umprum-map-widget { font-family: "Umprum-Regular", Helvetica, Arial, sans-serif; width: 100%; max-width: 1400px; margin: 0 auto; }
+    .map-tabs { margin-bottom: 20px; display: flex; gap: 10px; }
+    .map-tab { padding: 10px 24px; background: transparent; border: 2px solid #0000ff; color: #0000ff; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
+    .map-tab.active, .map-tab:hover { background: #0000ff; color: white; }
+    .map-container { position: relative; width: 100%; overflow: hidden; min-height: 400px; background: #f9f9f9; }
+    .map-img { width: 100%; height: auto; display: block; transition: opacity 0.3s; }
+    
+    .map-marker {
+        position: absolute; width: 1.2%; padding-bottom: 1.2%; background-color: #e60000;
+        border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; z-index: 10; transition: transform 0.2s;
+    }
+    .map-marker:hover { transform: translate(-50%, -50%) scale(1.6); z-index: 20; }
+    
+    .map-tooltip {
+        visibility: hidden; opacity: 0; position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%);
+        background-color: #0000ff; color: white; padding: 6px 10px; border-radius: 4px; font-size: 12px;
+        white-space: nowrap; pointer-events: none; transition: 0.2s; z-index: 30;
+    }
+    .map-marker:hover .map-tooltip { visibility: visible; opacity: 1; }
+    
+    @media (max-width: 768px) {
+        .map-marker { width: 3%; padding-bottom: 3%; }
+        .map-tooltip { white-space: normal; width: 120px; text-align: center; }
+    }
+</style>
+
+<script>
+    const imgElement = document.getElementById('current-map-img');
+    const layer = document.getElementById('markers-layer');
+    const tabs = document.querySelectorAll('.map-tab');
+
+    function switchMap(region) {
+        if (!window.mapData) {
+            console.error("schools-data.js not loaded!");
+            return;
+        }
+
+        tabs.forEach(t => t.classList.remove('active'));
+        document.querySelector(`button[onclick="switchMap('${region}')"]`).classList.add('active');
+
+        const data = window.mapData[region];
+        imgElement.style.opacity = 0;
+        
+        setTimeout(() => {
+            imgElement.src = data.image;
+            imgElement.onload = () => { imgElement.style.opacity = 1; };
+            
+            layer.innerHTML = '';
+            data.schools.forEach(school => {
+                const marker = document.createElement('a');
+                marker.href = school.url;
+                marker.className = 'map-marker';
+                marker.target = "_blank";
+                marker.style.left = school.x + '%';
+                marker.style.top = school.y + '%';
+                marker.innerHTML = `<div class="map-tooltip">${school.name}</div>`;
+                layer.appendChild(marker);
+            });
+        }, 200);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { switchMap('eu'); });
+</script>

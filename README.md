@@ -2,7 +2,7 @@
 
 An interactive map system developed for the Academy of Arts, Architecture and Design in Prague (UMPRUM). The project visualizes the university's global exchange network.
 
-**[View Live Map](https://тyunglordsimens.github.io/umprum-partner-map/)** | **[Open Data Generator](https://yunglordsimens.github.io/umprum-partner-map/generator.html)**
+**[View Live Map](https://yunglordsimens.github.io/umprum-partner-map/)** | **[Open Data Generator](https://yunglordsimens.github.io/umprum-partner-map/generator.html)**
 
 ---
 
